@@ -1,0 +1,20 @@
+{
+  "name": "com2us",
+  "version": "1.0.0",
+  "description": "com2us playsearch site",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "supervisor index.js"
+  },
+  "keywords": [
+    "com2us"
+  ],
+  "author": "declan andrew",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongodb": "^3.4.1",
+    "xlsx": "^0.15.4"
+  }
+}

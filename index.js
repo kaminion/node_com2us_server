@@ -5,12 +5,14 @@ const port = 3000;
 const xlsx = require("xlsx");
 //db 파일로드
 const database = require("./db");
-const server = require("mongodb").server;
 // 미들웨어
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:false}));
 //json 파싱
 app.use(bodyParser.json());
+// 정적데이터 제공
+app.use("/", express.static("./public"));
+app.use("/node_modules", express.static("./node_modules"));
 
 let dbInstance = null;
 
@@ -21,55 +23,79 @@ app.listen(port, ()=>{
 
 });
 
-app.get("/", (req, res)=>{
+//서버 처음 가동시에만 실행할것을 권장함
+function readExcelFile(Filename)
+{
+    const excelData = xlsx.readFile(Filename);
 
-    const dbData = dbInstance.database;
-    let   cursor = dbData.collection('users').find();
-    
-    let dataArr = [];
-    cursor.each((error, data) => {
-        console.log("----------------DataREAD--------------------------");
-        if(error) console.log(error);
-        else console.log(data);
-        console.log("----------------DataREAD--------------------------");
+    for(let i=0;i<excelData.SheetNames.length;i++)
+    {
+        // 맨 처음 시트이름과 시트의 데이터를 추출함
+        let sheetName = excelData.SheetNames[i];
+        let sheetDatas = excelData.Sheets[sheetName];
+        console.log(sheetName);
+        console.log(i);
+        console.log(excelData.SheetNames.length);
 
-    });
-    res.send(dataArr);
+        // 컬렉션 이름이 곧 sheet이름 (테이블)
+        let cursor = dbInstance.database.collection(sheetName);
+        
+        let row = 2;
+        let playerObj = {};
+        // 시트 A필드에 값 없을 경우 자동 종료
+        while(sheetDatas['A' + row] !== undefined)
+        {
+            for(let j=65;j<89;j++)
+            {
+                let column = String.fromCharCode(j); // 알파벳 추출
+                let columnName = sheetDatas[column + 1]; // 맨 처음 컬럼 네임 추출
+                let playerColumn = sheetDatas[column + row];
+
+                // 플레이어의 컬럼이 없을 경우 다음 컬럼으로 이동, 있다면 해당 속성이름에 값을 넣음
+                if(playerColumn === undefined) continue;
+                playerObj[columnName.v] = playerColumn.v;
+            }
+            // DB INSERT
+            cursor.insertOne(playerObj);
+            playerObj = {};
+            row ++;
+        }
+    }
+
+}
+
+// 파일 읽는부분
+app.get("/com2usfileinit", (req, res)=>{
+
+    let filename = "./컴프매_선수 데이터_1910.xlsx";
+    readExcelFile(filename);
+    res.send('complete');
 
 });
 
 
-// 파일 읽는부분
-app.get("/init", (req, res)=>{
+// 검색 RESTAPI
+app.get("/search/:type", (req, res)=>{
 
-    let filename = "./컴프매_선수 데이터_1910.xlsx"
-    const excelData = xlsx.readFile(filename);
-    // 타자
-    let BatterName = excelData.SheetNames[0];
-    let BatterData = excelData.Sheets[BatterName];
+    let typeName = req.params.type;
+    let name = req.query.name;
 
-    // 투수
-    let pitcherSheetName = excelData.SheetNames[1];
-    let pitcherData = excelData.Sheets[pitcherSheetName];
+    let cursor = dbInstance.database.collection(typeName);
 
-    let row = 2;
-    let playerObj = {};
-    while(BatterData['A' + row] !== undefined)
-    {
-        for(i=65;i<89;i++)
+    let jsonObj = new Object();
+    jsonObj.data = new Array();
+    jsonObj.cnt = 0;
+
+    cursor.find({'이름' : name}).each((err, value)=>{
+        
+        if(err) throw err;
+
+        if(value !== null) 
         {
-            let column = String.fromCharCode(i);
-            let columnName = BatterData[column + 1];
-            let playerColumn = BatterData[column + row];
-
-            if(playerColumn === undefined) continue;
-            playerObj[columnName.v] = playerColumn.v;
-        }
-        console.log(playerObj);
-        playerObj = {};
-        row++;
-    }
-
+            jsonObj.data.push(value);
+            jsonObj.cnt ++;
+        }else res.send(jsonObj); 
+    });
 
 
 });

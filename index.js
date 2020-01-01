@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 // 정적데이터 제공
 app.use("/", express.static("./public"));
 app.use("/node_modules", express.static("./node_modules"));
+app.use("/public/imgs", express.static("./public/imgs"));
 
 let dbInstance = null;
 

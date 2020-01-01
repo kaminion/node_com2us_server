@@ -7,7 +7,7 @@ class Header extends Component
         return (
             <Fragment>
                 <div className="header">
-
+                    <img src="/public/imgs/2020A.png"/>
                 </div>
             </Fragment>
         );

@@ -14,9 +14,6 @@ module.exports = {
         rules:[{
             test: /\.(js|jsx)$/,
             loader: 'babel-loader'
-        },{
-            test:/\.css$/,
-            loader: ['style-loader', 'css-loader']
         }]
     },
     // 3. 합친 뒤 출력될 곳 지정

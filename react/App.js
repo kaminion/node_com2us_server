@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from "react";
 import Header from "./component/Header";
+import GNB from "./component/GNB";
+import Search from "./component/search/Search";
 import Footer from "./component/Footer";
 
 class App extends Component
@@ -9,7 +11,8 @@ class App extends Component
         return (
             <Fragment>
                 <Header/>
-                <h1>컴프매라이브</h1>
+                <GNB />
+                <Search/>
                 <Footer/>
             </Fragment>
             

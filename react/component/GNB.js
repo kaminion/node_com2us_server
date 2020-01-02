@@ -1,16 +1,19 @@
-import React from "react";
+import React, {Component} from "react";
 
-const GNB = () => 
+class GNB extends Component 
 {
-    return (
-    <nav>
-        <ul>
-            <li><a>선수검색</a></li>
-            <li><a>자유게시판</a></li>
-            <li><a>마이덱</a></li>
-        </ul>
-    </nav>
-    );
+    render()
+    {
+        return (
+            <nav>
+                <ul>
+                    <li><a href="/">선수검색</a></li>
+                    <li><a>자유게시판</a></li>
+                    <li><a>마이덱</a></li>
+                </ul>
+            </nav>
+        );
+    }
 }
 
 export default GNB;

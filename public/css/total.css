@@ -105,4 +105,19 @@ nav > ul > li:hover{background-color:darkred;color:#000000}
 nav > ul > li:last-child{border: none;}
 nav > ul > li > a {vertical-align: text-bottom;}
 nav > ul::after{clear:both;}
-.footer{width:100%;position:fixed;bottom:0;color:#ffff;text-align:center;background-color:#6c757d}
+
+/* card 결과들 */
+.playerlist{color:white;}
+.playerlist > li > span {margin-right:20px;}
+.ace{background: linear-gradient(to bottom, #b68d0d 50%, #603c02);}
+.monster{background:linear-gradient(to bottom, #5046a9, #39366b);}
+.special{background:linear-gradient(to bottom, #044796, #00192f);}
+.normal{background-color:black;}
+.purple{color: purple;}
+.sky{color:skyblue;}
+.green {color: darkseagreen;}
+.brown {color:brown;}
+
+
+
+.footer{width:100%;color:#ffff;text-align:center;background-color:#6c757d}

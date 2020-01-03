@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import Header from "./component/Header";
 import GNB from "./component/GNB";
-import Search from "./component/search/SearchForm";
+import Search from "./component/search/Search";
 import Footer from "./component/Footer";
 
 class App extends Component
@@ -15,7 +15,6 @@ class App extends Component
                 <Search/>
                 <Footer/>
             </Fragment>
-            
         );
     }
 }

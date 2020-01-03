@@ -33,13 +33,11 @@ function readExcelFile(Filename)
     {
         // 맨 처음 시트이름과 시트의 데이터를 추출함
         let sheetName = excelData.SheetNames[i];
-        let sheetDatas = excelData.Sheets[sheetName];
-        console.log(sheetName);
-        console.log(i);
-        console.log(excelData.SheetNames.length);
 
-        // 컬렉션 이름이 곧 sheet이름 (테이블)
-        let cursor = dbInstance.database.collection(sheetName);
+        let sheetDatas = excelData.Sheets[sheetName];
+
+        // 컬렉션 이름이 곧 sheet이름 (테이블) 이었으나 (sheetName) 한글때문에 수정
+        let cursor = dbInstance.database.collection("players");
         
         let row = 2;
         let playerObj = {};
@@ -79,7 +77,8 @@ app.get("/com2usfileinit", (req, res)=>{
 app.get("/search/:type", (req, res)=>{
 
     let typeName = req.params.type;
-    let name = req.query.name;
+    let searchType = req.query.key;
+    let searchValue = req.query.value;
 
     let cursor = dbInstance.database.collection(typeName);
 
@@ -87,7 +86,29 @@ app.get("/search/:type", (req, res)=>{
     jsonObj.data = new Array();
     jsonObj.cnt = 0;
 
-    cursor.find({'이름' : name}).each((err, value)=>{
+    console.log(searchType + " : " + searchValue);
+
+    let key;
+    switch(searchType)
+    {
+        case "team" :
+            key = "팀" 
+            break;
+        case "name" :
+            key = "이름" 
+            break;
+        case "years" :
+            key = "연도" 
+            break;
+        case "grade" :
+            key = "선수등급" 
+            break;
+        default : 
+            key = "팀"
+            break;
+    }
+
+    cursor.find({key : searchValue}).each((err, value)=>{
         
         if(err) throw err;
 

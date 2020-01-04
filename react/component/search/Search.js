@@ -6,18 +6,19 @@ class Search extends React.Component
 {
     constructor(props) {
         super(props);
-        this.state = {select:"team", keyword : "", result : [], isSearching : false};
+        this.state = {select:"team", keyword : "", result : [], count : 0};
 
         this.submitEvent = this.submitEvent.bind(this);
         this.changeEvent = this.changeEvent.bind(this);
+        this.clickEvent  = this.clickEvent.bind(this);
     }
 
     async submitEvent(e)
     {
         e.preventDefault();
 
-        const {data : {data}} = await axios.get("http://localhost:3000/search/players?key="+ this.state.select + "&value=" + this.state.keyword);
-        this.setState({keyword : "", result : data, isSearching : true});
+        const {data : {data, cnt}} = await axios.get("http://localhost:3000/search/players?key="+ this.state.select + "&value=" + this.state.keyword);
+        this.setState({keyword : "", result : data, count : cnt});
     }
 
     changeEvent(e)
@@ -31,13 +32,31 @@ class Search extends React.Component
         {
             this.setState({[e.target.name] : e.target.value});
         }
+    }
+
+    clickEvent(e)
+    {
+        let playercardCls = document.querySelectorAll(".playercard");
+        let selectCard = e.target;
+
+        if(playercardCls === undefined || playercardCls === null ) return -1;
         
+        for(let i=0;i<playercardCls.length;i++)
+        {
+            playercardCls[i].remove();
+        }
+
+        let like = selectCard.nextSibling.innerText;
+        // 선호타순 체크
+        if(like === "") return -1;
+
     }
 
 
     render()
     {
-        const {keyword, select, result, isSearching} = this.state;
+        const {keyword, select, result, count} = this.state;
+
         return(
         <Fragment>
             <form onSubmit={this.submitEvent}>
@@ -51,12 +70,13 @@ class Search extends React.Component
                 <button type="submit">검색</button>
             </form>
             <ul className="playerlist">
-            {
-                
-                result.map( player => 
-                
-                    (<SearchResult key={player._id} props={player}/>)
+            {count !== 0 ? (
+            <li style={{color:"black"}}>총 {count}개의 결과가 있습니다.</li>) : 
+            <li style={{color:"black"}}>"검색을 해주세요"</li> }
 
+            {
+                result.map( player => 
+                    (<SearchResult key={player._id} props={player} event={this.clickEvent}/>)
                 )
             }
             </ul>

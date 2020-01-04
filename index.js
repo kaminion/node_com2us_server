@@ -89,26 +89,26 @@ app.get("/search/:type", (req, res)=>{
     console.log(searchType + " : " + searchValue);
 
     let key;
-    switch(searchType)
+    switch(searchType.toLowerCase())
     {
         case "team" :
-            key = "팀" 
+            key = "팀";
             break;
         case "name" :
-            key = "이름" 
+            key = "이름";
             break;
         case "years" :
-            key = "연도" 
+            key = "연도"; 
             break;
         case "grade" :
-            key = "선수등급" 
+            key = "선수등급"; 
             break;
         default : 
-            key = "팀"
+            key = "팀";
             break;
     }
 
-    cursor.find({key : searchValue}).each((err, value)=>{
+    cursor.find({[key] : searchValue}).each((err, value)=>{
         
         if(err) throw err;
 
